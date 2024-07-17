@@ -28,8 +28,8 @@ const Profile = () => {
         keyExtractor={(item) => item.$id}
         ListEmptyComponent={() => (
           <EmptyState
-            title="No Centers Found"
-            subtitle="Don't worry, We are finding you the best deals!"
+            title="No Trips Found"
+            subtitle="Don't worry, We are look forword to your trips!"
           />
         )}
         ListHeaderComponent={() => (
