@@ -1,66 +1,103 @@
+import React, { useEffect, useState } from "react";
 import {
-  FlatList,
+  ScrollView,
   Text,
   View,
   Image,
   RefreshControl,
+  TouchableOpacity,
   Alert,
 } from "react-native";
-import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { images } from "../../constants";
 import EmptyState from "../../components/EmptyState";
-import useAppwrite from "../../lib/useAppwrite";
-import { getAllPosts } from "../../lib/appwrite";
+import CustomButton from "../../components/CustomButton";
+import { getUserTravelEntries } from "../../lib/appwrite";
 import { useGlobalContext } from "../../context/GlobalProvider";
+import { useRouter } from "expo-router";
+import moment from "moment";
 
 const Home = () => {
-  const { user, setUser, setIsLogged } = useGlobalContext();
-  // const { data: posts, refetch } = useAppwrite(getAllPosts);
+  const { user } = useGlobalContext();
+  const router = useRouter();
+  const [posts, setPosts] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-  // const [refreshing, setRefreshing] = useState(false);
+  const fetchTravelEntries = async () => {
+    try {
+      const entries = await getUserTravelEntries();
+      setPosts(entries);
+    } catch (error) {
+      console.error("Error fetching travel entries:", error);
+      Alert.alert("Error", "Failed to fetch travel entries.");
+    }
+  };
 
-  // const onRefresh = async () => {
-  //   setRefreshing(true);
-  //   await refetch();
-  //   setRefreshing(false);
-  // };
+  useEffect(() => {
+    fetchTravelEntries();
+  }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchTravelEntries();
+    setRefreshing(false);
+  };
+
+  const handleEntryPress = (id) => {
+    router.push(`/entry/${id}`);
+  };
+
   return (
     <SafeAreaView className="bg-primary h-full">
-      <FlatList
-        // data={posts}
-        // keyExtractor={(item) => item.$id}
-        ListHeaderComponent={() => (
-          <View className="my-6 px-4 space-y-6">
-            <View className="justify-between items-start flex-row mb-6">
-              <View>
-                <Text className="font-pmedium text-sm text-gray-100">
-                  Welcome Back,
-                </Text>
-                <Text className="text-2xl font-psemibold text-white">
-                  {user?.username}
-                </Text>
-              </View>
-              <View className="mt-1.5">
-                <Image
-                  source={images.logo}
-                  className="w-[150px] -top-8"
-                  resizeMode="contain"
-                />
-              </View>
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 16 }}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
+        <View className="my-6 px-4 space-y-6">
+          <View className="justify-between items-start flex-row">
+            <View>
+              <Text className="font-pmedium text-sm text-gray-100">Welcome Back,</Text>
+              <Text className="text-2xl font-psemibold text-white">{user?.username}</Text>
+            </View>
+            <View className="mt-1.5">
+              <Image source={images.logo} className="w-[150px] -top-8" resizeMode="contain" />
             </View>
           </View>
-        )}
-        ListEmptyComponent={() => (
-          <EmptyState
-            title="No Trips Found"
-            subtitle="Don't worry, We are look forword to your trips!"
+
+          <CustomButton
+            title="Create New Entry"
+            handlePress={() => router.push('/create-entry')}
+            containerStyles="mb-4"
           />
-        )}
-        // refreshControl={
-        //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        // }
-      />
+
+          {posts.length > 0 ? (
+            posts.map((item) => (
+              <TouchableOpacity key={item.$id} onPress={() => handleEntryPress(item.$id)}>
+                <View className="px-4 py-2 bg-white rounded-lg shadow-md mb-2">
+                  <Text className="text-sm text-gray-500">{moment(item.created_at).format("MMMM D, YYYY")}</Text>
+                  <Text className="text-lg font-semibold">{item.title}</Text>
+                  <Text className="text-gray-600">{item.location}</Text>
+                  <Text className="mt-2">{item.content}</Text>
+                  <View className="mt-2 flex-row flex-wrap">
+                    {item.images.map((imageUrl, index) => (
+                      <Image
+                        key={index}
+                        source={{ uri: imageUrl }}
+                        style={{ width: 100, height: 100, marginVertical: 4, marginRight: 4 }}
+                      />
+                    ))}
+                  </View>
+                </View>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <EmptyState
+              title="No Trips Found"
+              subtitle="Don't worry, We are looking forward to your trips!"
+            />
+          )}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
