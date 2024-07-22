@@ -1,6 +1,7 @@
-import { View, Text, Image } from "react-native";
-import { Tabs, Redirect } from "expo-router";
+// _layout.jsx (for tabs)
 
+import { View, Text, Image } from "react-native";
+import { Tabs } from "expo-router";
 import { icons } from "../../constants";
 
 const TabIcon = ({ icon, color, name, focused }) => {
@@ -48,6 +49,21 @@ const TabsLayout = () => {
                 icon={icons.home}
                 color={color}
                 name="Home"
+                focused={focused}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="create-entry"
+          options={{
+            title: "Create Entry",
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                icon={icons.plus} // Add an icon for creating entries
+                color={color}
+                name="Create"
                 focused={focused}
               />
             ),
