@@ -1,9 +1,4 @@
-// _layout.jsx (for tabs)
-
-// _layout.jsx (for tabs)
-
 import { View, Text, Image } from "react-native";
-import { Tabs } from "expo-router";
 import { Tabs } from "expo-router";
 import { icons } from "../../constants";
 
@@ -60,16 +55,16 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="create-entry"
           options={{
-            title: "Create Entry",
+            title: 'Create',
             headerShown: false,
-            tabBarIcon: ({ color, focused }) => (
+            tabBarIcon: ({ color, focused}) => (
               <TabIcon
-                icon={icons.plus} // Add an icon for creating entries
+                icon = {icons.plus}
                 color={color}
                 name="Create"
-                focused={focused}
+                focused={focused}              
               />
-            ),
+            )
           }}
         />
         <Tabs.Screen
