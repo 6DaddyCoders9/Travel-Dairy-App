@@ -26,7 +26,11 @@ const Home = () => {
   const fetchTravelEntries = async () => {
     try {
       const entries = await getUserTravelEntries();
-      setPosts(entries);
+
+      // Sort entries by created_at date in descending order
+      const sortedEntries = entries.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+      setPosts(sortedEntries);
     } catch (error) {
       console.error("Error fetching travel entries:", error);
       Alert.alert("Error", "Failed to fetch travel entries.");
