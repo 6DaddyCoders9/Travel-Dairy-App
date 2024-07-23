@@ -1,6 +1,9 @@
 // _layout.jsx (for tabs)
 
+// _layout.jsx (for tabs)
+
 import { View, Text, Image } from "react-native";
+import { Tabs } from "expo-router";
 import { Tabs } from "expo-router";
 import { icons } from "../../constants";
 

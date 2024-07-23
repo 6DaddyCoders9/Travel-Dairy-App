@@ -18,39 +18,16 @@ import { useRouter } from "expo-router";
 import moment from "moment";
 
 const Home = () => {
-  const { user } = useGlobalContext();
-  const router = useRouter();
-  const [posts, setPosts] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
+  const { user, setUser, setIsLogged } = useGlobalContext();
+  // const { data: posts, refetch } = useAppwrite(getAllPosts);
 
-  const fetchTravelEntries = async () => {
-    try {
-      const entries = await getUserTravelEntries();
+  // const [refreshing, setRefreshing] = useState(false);
 
-      // Sort entries by created_at date in descending order
-      const sortedEntries = entries.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-      setPosts(sortedEntries);
-    } catch (error) {
-      console.error("Error fetching travel entries:", error);
-      Alert.alert("Error", "Failed to fetch travel entries.");
-    }
-  };
-
-  useEffect(() => {
-    fetchTravelEntries();
-  }, []);
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await fetchTravelEntries();
-    setRefreshing(false);
-  };
-
-  const handleEntryPress = (id) => {
-    router.push(`/entry/${id}`);
-  };
-
+  // const onRefresh = async () => {
+  //   setRefreshing(true);
+  //   await refetch();
+  //   setRefreshing(false);
+  // };
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView
