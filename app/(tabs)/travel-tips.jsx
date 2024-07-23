@@ -33,9 +33,6 @@ const TravelTips = () => {
               <Text className="font-pmedium text-sm text-gray-100">Travel Tips</Text>
               <Text className="text-2xl font-psemibold text-white">For Your Next Journey</Text>
             </View>
-            <View className="mt-1.5">
-              <Image source={images.logo} className="w-[150px] -top-8" resizeMode="contain" />
-            </View>
           </View>
 
           {tips.length > 0 ? (

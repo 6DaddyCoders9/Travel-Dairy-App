@@ -2,29 +2,32 @@ import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  TextInput,
   Image,
   TouchableOpacity,
   Alert,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
-import { router, useLocalSearchParams } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import * as ImagePicker from 'expo-image-picker';
 import { getTravelEntry, updateTravelEntry, deleteTravelEntry } from "../../lib/appwrite";
-import * as ImagePicker from 'expo-image-picker'; // Import the ImagePicker
 import FormField from "../../components/FormField";
-import CustomButton from "../../components/CustomButton"; // Ensure this import is correct
-import { icons } from "../../constants"; // Ensure this import is correct
+import CustomButton from "../../components/CustomButton";
+import { icons } from "../../constants";
 
 const EntryDetails = () => {
   const { id } = useLocalSearchParams();
+  const router = useRouter();
+
   const [entry, setEntry] = useState(null);
-  const [selectedImages, setSelectedImages] = useState([]); // Add state for selected images
+  const [selectedImages, setSelectedImages] = useState([]);
 
   useEffect(() => {
     const fetchEntry = async () => {
       try {
         const data = await getTravelEntry(id);
         setEntry(data);
+        setSelectedImages(data.images || []);
       } catch (error) {
         console.error("Error fetching entry:", error);
         Alert.alert("Error", "Failed to fetch entry.");
@@ -39,7 +42,7 @@ const EntryDetails = () => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       aspect: [4, 3],
       quality: 1,
-      allowsMultipleSelection: true // Allow multiple image selection
+      allowsMultipleSelection: true
     });
 
     if (!result.canceled) {
@@ -47,6 +50,12 @@ const EntryDetails = () => {
       setSelectedImages(prevImages => [...prevImages, ...newImages]);
       setEntry(prevEntry => ({ ...prevEntry, images: [...prevEntry.images, ...newImages] }));
     }
+  };
+
+  const handleImageDelete = (index) => {
+    const updatedImages = selectedImages.filter((_, i) => i !== index);
+    setSelectedImages(updatedImages);
+    setEntry(prevEntry => ({ ...prevEntry, images: updatedImages }));
   };
 
   const handleUpdate = async () => {
@@ -71,12 +80,19 @@ const EntryDetails = () => {
     }
   };
 
-  if (!entry) return <Text>Loading...</Text>;
+  if (!entry) {
+    return (
+      <View className="flex-1 justify-center items-center bg-primary">
+        <ActivityIndicator size="large" color="#ffffff" />
+        <Text className="text-white mt-4">Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16 }} className="bg-primary">
       <View className="px-4 py-6 rounded-lg shadow-md">
-        <Text className="text-2xl font-psemibold text-gray-200 mb-4">Edit Travel Entry</Text>
+        <Text className="text-2xl font-semibold text-gray-200 mb-4">Edit Travel Entry</Text>
         <FormField
           title="Title"
           value={entry.title}
@@ -100,31 +116,35 @@ const EntryDetails = () => {
         />
 
         <View className="mt-7 space-y-2">
-          <Text className="text-base text-gray-100 font-pmedium">Images</Text>
-          <TouchableOpacity onPress={handleImagePick}>
-            {selectedImages.length > 0 ? (
-              <ScrollView horizontal contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-                {selectedImages.map((uri, index) => (
+          <Text className="text-base text-gray-100 font-medium">Images</Text>
+          {selectedImages.length > 0 ? (
+            <ScrollView horizontal contentContainerStyle={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+              {selectedImages.map((uri, index) => (
+                <View key={index} className="relative mr-2">
                   <Image
-                    key={index}
                     source={{ uri }}
-                    className="w-32 h-32 rounded-2xl mr-2"
+                    className="w-32 h-32 rounded-2xl"
                     resizeMode='cover'
                   />
-                ))}
-              </ScrollView>
-            ) : (
-              <View className="w-full h-16 px-4 bg-black-100 rounded-2xl justify-center items-center border-2 border-black-100 flex-row space-x-2">
-                <Image 
-                  source={icons.upload}
-                  resizeMode='contain'
-                  className="h-5 w-5"
-                />
-                <Text className="text-sm text-gray-100 font-pmedium">Choose files</Text>
-              </View>
-            )}
-          </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => handleImageDelete(index)}
+                    className="absolute top-0 right-0 bg-red-500 rounded-full p-1"
+                  >
+                    <Text className="text-white">X</Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </ScrollView>
+          ) : (
+            <Text className="text-sm text-gray-100 font-medium">No images selected</Text>
+          )}
         </View>
+
+        <CustomButton
+          title="Pick Images"
+          handlePress={handleImagePick}
+          containerStyles="mt-6"
+        />
 
         <CustomButton
           title="Update Entry"
