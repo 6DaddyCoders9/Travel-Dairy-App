@@ -37,9 +37,9 @@ const TravelTips = () => {
 
           {tips.length > 0 ? (
             tips.map((tip, index) => (
-              <View key={index} className="px-4 py-2 bg-white rounded-lg shadow-md mb-2">
-                <Text className="text-lg font-semibold">{tip.title}</Text>
-                <Text className="mt-2">{tip.content}</Text>
+              <View key={index} className="px-4 py-2 bg-gray-800 rounded-lg shadow-md mb-2">
+                <Text className="text-lg font-semibold text-secondary-200">{tip.title}</Text>
+                <Text className="mt-2 text-gray-200">{tip.content}</Text>
               </View>
             ))
           ) : (

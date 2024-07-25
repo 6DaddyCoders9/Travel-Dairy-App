@@ -1,14 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Image, FlatList, TouchableOpacity, Text, RefreshControl, Alert } from "react-native";
+import {
+  View,
+  Image,
+  FlatList,
+  TouchableOpacity,
+  Text,
+  RefreshControl,
+  Alert,
+} from "react-native";
+import moment from "moment"; // Import moment for date formatting
 
 import { icons } from "../../constants";
 import { getUserTravelEntries, signOut } from "../../lib/appwrite";
 import { useGlobalContext } from "../../context/GlobalProvider";
 import EmptyState from "../../components/EmptyState";
 import InfoBox from "../../components/InfoBox.jsx";
-import moment from "moment"; // Import moment for date formatting
 
 const Profile = () => {
   const { user, setUser, setIsLogged } = useGlobalContext();
@@ -126,9 +134,9 @@ const Profile = () => {
           </View>
         )}
         renderItem={({ item }) => (
-          <View className="px-4 py-2 bg-white rounded-lg shadow-md mb-2">
-            <Text className="text-lg font-semibold">{item.title}</Text>
-            <Text className="text-sm text-gray-500">
+          <View className="p-4 bg-gray-800 rounded-lg shadow-md mb-2 mx-4">
+            <Text className="text-lg font-semibold text-secondary">{item.location}</Text>
+            <Text className="text-sm text-gray-200">
               {moment(item.created_at).format("MMMM D, YYYY")}
             </Text>
           </View>
