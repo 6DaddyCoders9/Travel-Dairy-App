@@ -77,12 +77,12 @@ const Home = () => {
           {posts.length > 0 ? (
             posts.map((item) => (
               <TouchableOpacity key={item.$id} onPress={() => handleEntryPress(item.$id)}>
-                <View className="px-4 py-2 bg-white rounded-lg shadow-md mb-2">
-                  <Text className="text-sm text-gray-500">{moment(item.created_at).format("MMMM D, YYYY")}</Text>
-                  <Text className="text-lg font-semibold">{item.title}</Text>
-                  <Text className="text-gray-600">{item.location}</Text>
-                  <Text className="mt-2">{item.content}</Text>
-                  <View className="mt-2 flex-row flex-wrap">
+                <View className="px-4 py-2 bg-gray-800 rounded-lg shadow-md mb-2">
+                  <Text className="text-xs text-gray-300">{moment(item.created_at).format("MMMM D, YYYY")}</Text>
+                  <Text className="text-lg font-semibold text-secondary-100">{item.title}</Text>
+                  <Text className="text-secondary-200 text-xs">{item.location}</Text>
+                  <Text className="mt-2 pt-5 text-white">{item.content}</Text>
+                  <View className="mt-2 flex-row flex-wrap pt-10">
                     {item.images.map((imageUrl, index) => (
                       <Image
                         key={index}

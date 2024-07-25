@@ -64,7 +64,9 @@ const CreateEntry = () => {
         await createTravelEntry(newEntry.title, newEntry.content, newEntry.location, newEntry.images, newEntry.date);
         setNewEntry({ title: '', content: '', location: '', images: [], date: new Date().toISOString() });
         setSelectedImages([]); // Clear selected images after submission
-        router.back(); // Go back to the Home screen after creating the entry
+        Alert.alert('Success', 'Your travel entry has been created successfully!', [
+          { text: 'OK', onPress: () => router.back() }
+        ]); // Show success alert and go back to the Home screen
       } else {
         Alert.alert('Error', 'Please fill in all fields.');
       }
@@ -73,7 +75,6 @@ const CreateEntry = () => {
       Alert.alert('Error', 'Failed to create travel entry.');
     }
   };
-
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 16 }} className="bg-primary">
